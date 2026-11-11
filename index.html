@@ -2,10 +2,31 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>RemoteTV - Siri Remote</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>RemoteTV</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        margin: 0;
+        background-color: #090a0c;
+        color: #f5f5f7;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow: hidden;
+      }
+      button {
+        outline: none;
+      }
+      button:active {
+        transform: scale(0.96);
+      }
+    </style>
   </head>
-  <body style="margin: 0; background-color: #000; overflow: hidden;">
+  <body>
     <div id="root"></div>
     <script type="module" src="/main.tsx"></script>
   </body>

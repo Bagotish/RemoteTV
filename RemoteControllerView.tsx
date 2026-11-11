@@ -36,10 +36,19 @@ export const RemoteControllerView: React.FC<RemoteControllerViewProps> = ({ room
 
   const send = (action: string, payload: any = null) => {
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
-      navigator.vibrate(18); // iOS subtle taptic click simulation
+      navigator.vibrate(18);
     }
     if (connRef.current && connRef.current.open) {
       connRef.current.send({ action, payload });
+    }
+    try {
+      fetch('/api/mac-control', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, payload })
+      }).catch(() => {});
+    } catch (e) {
+      // ignore
     }
   };
 
@@ -73,7 +82,7 @@ export const RemoteControllerView: React.FC<RemoteControllerViewProps> = ({ room
 
   return (
     <div style={styles.page}>
-      {/* iOS Status Pill */}
+      {/* iOS Dynamic Island Style Status Pill */}
       <div style={styles.statusBar}>
         <div style={styles.statusPill}>
           <div
@@ -83,7 +92,7 @@ export const RemoteControllerView: React.FC<RemoteControllerViewProps> = ({ room
               boxShadow: status === 'connected' ? '0 0 8px rgba(52,199,89,0.8)' : 'none'
             }}
           />
-          <span>{status === 'connected' ? `Connected · ${roomCode}` : 'Connecting...'}</span>
+          <span>{status === 'connected' ? `Connected · PIN ${roomCode}` : 'Connecting...'}</span>
         </div>
       </div>
 
@@ -97,7 +106,15 @@ export const RemoteControllerView: React.FC<RemoteControllerViewProps> = ({ room
             onClick={() => send('power')}
             aria-label="Power"
           >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+            >
               <path d="M12 2v10M18.36 6.64a9 9 0 1 1-12.73 0" />
             </svg>
           </button>
@@ -105,21 +122,48 @@ export const RemoteControllerView: React.FC<RemoteControllerViewProps> = ({ room
 
         {/* Circular Clickpad (Touch surface + 4 direction clicks + Center Select) */}
         <div style={styles.clickpadOuter}>
-          {/* North */}
-          <button style={{ ...styles.clickpadNav, top: 4, left: '50%', transform: 'translateX(-50%)' }} onClick={() => send('dpad_up')}>
-            <span style={styles.dpadDot} />
+          {/* North Direction */}
+          <button
+            style={{ ...styles.clickpadNav, top: 4, left: '50%', transform: 'translateX(-50%)' }}
+            onClick={() => send('dpad_up')}
+            aria-label="Navigate Up"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" opacity="0.7">
+              <polyline points="18 15 12 9 6 15" />
+            </svg>
           </button>
-          {/* South */}
-          <button style={{ ...styles.clickpadNav, bottom: 4, left: '50%', transform: 'translateX(-50%)' }} onClick={() => send('dpad_down')}>
-            <span style={styles.dpadDot} />
+
+          {/* South Direction */}
+          <button
+            style={{ ...styles.clickpadNav, bottom: 4, left: '50%', transform: 'translateX(-50%)' }}
+            onClick={() => send('dpad_down')}
+            aria-label="Navigate Down"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" opacity="0.7">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
           </button>
-          {/* West */}
-          <button style={{ ...styles.clickpadNav, left: 4, top: '50%', transform: 'translateY(-50%)' }} onClick={() => send('dpad_left')}>
-            <span style={styles.dpadDot} />
+
+          {/* West Direction */}
+          <button
+            style={{ ...styles.clickpadNav, left: 4, top: '50%', transform: 'translateY(-50%)' }}
+            onClick={() => send('dpad_left')}
+            aria-label="Navigate Left"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" opacity="0.7">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
           </button>
-          {/* East */}
-          <button style={{ ...styles.clickpadNav, right: 4, top: '50%', transform: 'translateY(-50%)' }} onClick={() => send('dpad_right')}>
-            <span style={styles.dpadDot} />
+
+          {/* East Direction */}
+          <button
+            style={{ ...styles.clickpadNav, right: 4, top: '50%', transform: 'translateY(-50%)' }}
+            onClick={() => send('dpad_right')}
+            aria-label="Navigate Right"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" opacity="0.7">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
           </button>
 
           {/* Center Smooth Touch Surface & Select Click */}
@@ -129,41 +173,47 @@ export const RemoteControllerView: React.FC<RemoteControllerViewProps> = ({ room
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
             onClick={() => send('trackpad_tap')}
+            aria-label="Touch Surface and Select"
           />
         </div>
 
         {/* Button Section: 2 Columns */}
         <div style={styles.buttonMatrix}>
-          {/* Row 1: Back (<) and TV/Control Center */}
+          {/* Row 1: Back (<) and TV/Home */}
           <button style={styles.circleBtn} onClick={() => send('back')} aria-label="Back">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="15 18 9 12 15 6" />
             </svg>
           </button>
 
           <button style={styles.circleBtn} onClick={() => send('home')} aria-label="TV / Home">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="2" y="7" width="20" height="13" rx="2" />
+              <rect x="2" y="7" width="20" height="13" rx="2.5" />
               <polyline points="17 2 12 7 7 2" />
             </svg>
           </button>
 
           {/* Row 2: Play/Pause and Vertical Volume Pill */}
           <button style={styles.circleBtn} onClick={() => send('media_play_pause')} aria-label="Play / Pause">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="5 4 15 12 5 20 5 4" fill="currentColor" />
-              <line x1="19" y1="5" x2="19" y2="19" />
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 4 14 12 5 20" />
+              <rect x="16" y="5" width="3" height="14" rx="1" />
             </svg>
           </button>
 
           {/* Siri Remote Signature Vertical Volume Rocker */}
           <div style={styles.volumeRocker}>
             <button style={styles.volumeBtn} onClick={() => send('vol_up')} aria-label="Volume Up">
-              +
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
             </button>
             <div style={styles.volumeDivider} />
             <button style={styles.volumeBtn} onClick={() => send('vol_down')} aria-label="Volume Down">
-              –
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round">
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
             </button>
           </div>
 
@@ -171,8 +221,8 @@ export const RemoteControllerView: React.FC<RemoteControllerViewProps> = ({ room
           <button style={styles.circleBtn} onClick={() => send('mute')} aria-label="Mute">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-              <line x1="23" y1="9" x2="17" y2="15" />
-              <line x1="17" y1="9" x2="23" y2="15" />
+              <line x1="22" y1="9" x2="16" y2="15" />
+              <line x1="16" y1="9" x2="22" y2="15" />
             </svg>
           </button>
         </div>
@@ -195,20 +245,20 @@ function loadPeerJS(callback: () => void) {
 
 const styles: Record<string, React.CSSProperties> = {
   page: {
-    backgroundColor: '#000000',
+    backgroundColor: '#090a0c',
     minHeight: '100vh',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 'env(safe-area-inset-top, 20px) 16px env(safe-area-inset-bottom, 24px) 16px',
+    padding: 'env(safe-area-inset-top, 16px) 16px env(safe-area-inset-bottom, 20px) 16px',
     boxSizing: 'border-box',
     fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif',
     userSelect: 'none',
     WebkitUserSelect: 'none'
   },
   statusBar: {
-    marginBottom: 20
+    marginBottom: 18
   },
   statusPill: {
     display: 'flex',
@@ -219,24 +269,24 @@ const styles: Record<string, React.CSSProperties> = {
     WebkitBackdropFilter: 'blur(20px)',
     border: '0.5px solid rgba(255, 255, 255, 0.12)',
     padding: '6px 14px',
-    borderRadius: 24,
+    borderRadius: 99,
     color: 'rgba(255, 255, 255, 0.85)',
-    fontSize: '0.8rem',
+    fontSize: '0.78rem',
     fontWeight: 500,
     letterSpacing: '-0.2px'
   },
   statusDot: {
-    width: 7,
-    height: 7,
+    width: 6,
+    height: 6,
     borderRadius: '50%'
   },
   // Apple Aluminum Siri Remote Body
   remoteChassis: {
     width: 250,
     height: 520,
-    background: 'linear-gradient(178deg, #e3e4e6 0%, #c4c6ca 55%, #b5b7bc 100%)',
+    background: 'linear-gradient(180deg, #eff0f2 0%, #dbdde0 48%, #c5c8cc 100%)',
     borderRadius: 44,
-    boxShadow: '0 25px 60px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.8), inset 0 -1px 2px rgba(0, 0, 0, 0.25)',
+    boxShadow: '0 25px 60px rgba(0, 0, 0, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.9), inset 0 -1px 2px rgba(0, 0, 0, 0.25)',
     padding: '24px 22px',
     display: 'flex',
     flexDirection: 'column',
@@ -252,11 +302,12 @@ const styles: Record<string, React.CSSProperties> = {
     marginBottom: 16
   },
   micHole: {
-    width: 10,
+    width: 9,
     height: 2.5,
     borderRadius: 2,
-    backgroundColor: '#1c1c1e',
-    marginLeft: 8
+    backgroundColor: '#1b1c1e',
+    marginLeft: 8,
+    opacity: 0.9
   },
   powerBtn: {
     background: 'transparent',
@@ -268,15 +319,16 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: 'pointer',
     padding: 6,
     borderRadius: '50%',
-    marginRight: 4
+    marginRight: 4,
+    transition: 'transform 0.08s ease'
   },
   // Clickpad
   clickpadOuter: {
     width: 172,
     height: 172,
     borderRadius: '50%',
-    backgroundColor: '#1b1c1e',
-    boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.15)',
+    backgroundColor: '#1c1d20',
+    boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.45), 0 2px 6px rgba(0,0,0,0.15)',
     position: 'relative',
     display: 'flex',
     alignItems: 'center',
@@ -288,26 +340,22 @@ const styles: Record<string, React.CSSProperties> = {
     position: 'absolute',
     background: 'transparent',
     border: 'none',
+    color: '#ffffff',
     width: 44,
     height: 38,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
-    zIndex: 2
-  },
-  dpadDot: {
-    width: 4,
-    height: 4,
-    borderRadius: '50%',
-    backgroundColor: 'rgba(255, 255, 255, 0.45)'
+    zIndex: 2,
+    padding: 0
   },
   clickpadCenter: {
     width: 98,
     height: 98,
     borderRadius: '50%',
-    backgroundColor: '#26282b',
-    boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.08), 0 3px 8px rgba(0,0,0,0.3)',
+    background: 'radial-gradient(circle at 50% 45%, #2a2c30 0%, #202124 100%)',
+    boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.08), 0 3px 8px rgba(0,0,0,0.35)',
     cursor: 'crosshair',
     zIndex: 3
   },
@@ -324,14 +372,14 @@ const styles: Record<string, React.CSSProperties> = {
     width: 54,
     height: 54,
     borderRadius: '50%',
-    backgroundColor: '#1b1c1e',
+    backgroundColor: '#1c1d20',
     color: '#f2f2f7',
     border: 'none',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
-    boxShadow: '0 3px 6px rgba(0,0,0,0.2), inset 0 0.5px 0.5px rgba(255,255,255,0.12)',
+    boxShadow: '0 3px 6px rgba(0,0,0,0.22), inset 0 0.5px 0.5px rgba(255,255,255,0.12)',
     transition: 'transform 0.08s ease, background-color 0.08s ease',
     WebkitTapHighlightColor: 'transparent'
   },
@@ -342,7 +390,7 @@ const styles: Record<string, React.CSSProperties> = {
     width: 54,
     height: 124,
     borderRadius: 27,
-    backgroundColor: '#1b1c1e',
+    backgroundColor: '#1c1d20',
     boxShadow: '0 3px 8px rgba(0,0,0,0.25), inset 0 0.5px 0.5px rgba(255,255,255,0.12)',
     display: 'flex',
     flexDirection: 'column',
@@ -355,15 +403,13 @@ const styles: Record<string, React.CSSProperties> = {
     background: 'transparent',
     border: 'none',
     color: '#ffffff',
-    fontSize: '1.45rem',
-    fontWeight: 300,
     width: '100%',
     height: 48,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
-    fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+    padding: 0
   },
   volumeDivider: {
     width: 24,
