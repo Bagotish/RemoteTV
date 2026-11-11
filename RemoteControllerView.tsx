@@ -245,17 +245,25 @@ function loadPeerJS(callback: () => void) {
 
 const styles: Record<string, React.CSSProperties> = {
   page: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: '100vw',
+    height: '100vh',
+    zIndex: 999999,
     backgroundColor: '#090a0c',
-    minHeight: '100vh',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: 'env(safe-area-inset-top, 16px) 16px env(safe-area-inset-bottom, 20px) 16px',
+    justifyContent: 'space-between',
+    padding: 'env(safe-area-inset-top, 16px) 16px env(safe-area-inset-bottom, 24px) 16px',
     boxSizing: 'border-box',
     fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif',
     userSelect: 'none',
-    WebkitUserSelect: 'none'
+    WebkitUserSelect: 'none',
+    overflow: 'hidden'
   },
   statusBar: {
     marginBottom: 18
@@ -282,15 +290,18 @@ const styles: Record<string, React.CSSProperties> = {
   },
   // Apple Aluminum Siri Remote Body
   remoteChassis: {
-    width: 250,
-    height: 520,
+    width: '100%',
+    maxWidth: 290,
+    flex: 1,
+    maxHeight: 'calc(100vh - 80px)',
     background: 'linear-gradient(180deg, #eff0f2 0%, #dbdde0 48%, #c5c8cc 100%)',
     borderRadius: 44,
     boxShadow: '0 25px 60px rgba(0, 0, 0, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.9), inset 0 -1px 2px rgba(0, 0, 0, 0.25)',
-    padding: '24px 22px',
+    padding: '20px 22px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    justifyContent: 'space-between',
     position: 'relative',
     boxSizing: 'border-box'
   },
@@ -333,7 +344,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 24,
+    marginBottom: 12,
     touchAction: 'none'
   },
   clickpadNav: {
