@@ -1,0 +1,32 @@
+{
+  "name": "remotetv",
+  "version": "1.0.0",
+  "description": "Modeled directly after the Apple TV Siri Remote (2nd/3rd Gen aluminum unibody): - Precision brushed aluminum gradient styling. - Signature circular clickpad with outer directional clicks + center smooth touch surface for real mouse coordinates. - Back (`<`), TV/Home (`[ ]`), Play/Pause (`▷II`), Mute, and vertical pill Volume Rocker (`+ / –`). - Microphone pinhole & Power button. - iOS translucent blur glassmorphism pairing cards and OSD notifications.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bagotish/RemoteTV.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Bagotish/RemoteTV/issues"
+  },
+  "homepage": "https://github.com/Bagotish/RemoteTV#readme",
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.3.0",
+    "peerjs": "^1.5.5",
+    "qrcode": "^1.5.4",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "vite": "^8.3.7"
+  }
+}
